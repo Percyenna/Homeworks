@@ -21,7 +21,7 @@ int cmd_quit(tok_t arg[]) {
   exit(0);
   return 1;
 }
-
+int cmd_cd(tok_t arg[]);
 int cmd_help(tok_t arg[]);
 
 
@@ -36,6 +36,7 @@ typedef struct fun_desc {
 fun_desc_t cmd_table[] = {
   {cmd_help, "?", "show this help menu"},
   {cmd_quit, "quit", "quit the command shell"},
+  {cmd_cd, "cd", "change directory"},
 };
 
 int cmd_help(tok_t arg[]) {
@@ -43,6 +44,22 @@ int cmd_help(tok_t arg[]) {
   for (i=0; i < (sizeof(cmd_table)/sizeof(fun_desc_t)); i++) {
     printf("%s - %s\n",cmd_table[i].cmd, cmd_table[i].doc);
   }
+  return 1;
+}
+
+int cmd_cd(tok_t arg[]) {
+
+  char *dir = arg[0];
+
+	if (dir ==NULL || strcmp(dir,"~")==0){
+		dir ="/";
+	}
+
+
+  if ( chdir(dir) < 0){
+    perror("Error");
+  }
+
   return 1;
 }
 
