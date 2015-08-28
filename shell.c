@@ -122,7 +122,33 @@ process* create_process(char* inputString)
   return NULL;
 }
 
+char* concat(char *s1, char *s2)
+{
+char *result = malloc(strlen(s1)+strlen(s2)+1);
+strcpy(result,s1);
+strcat(result,s2);
+return result;
+}
 
+void path(tok_t *t){
+
+char *paths = getenv("PATH"), *dope;
+tok_t *pathes2 =getToks(paths);
+int i;
+for(i=0;i<MAXTOKS && pathes2[i];i++){
+
+	 dope = concat("/",t[0]);
+	 dope = concat(pathes2[i],dope);
+	 if(access(dope,F_OK)!=-1){
+	 execve(dope,t,NULL);
+	 //exit(0);
+        }	}
+execv(*t,t);
+   perror("Error: ");
+   exit(0);
+
+
+}
 
 int shell (int argc, char *argv[]) {
  char cwd[1024];
@@ -147,8 +173,27 @@ int shell (int argc, char *argv[]) {
     fundex = lookup(t[0]); /* Is first token a shell literal */
     if(fundex >= 0) cmd_table[fundex].fun(&t[1]);
     else {
-      fprintf(stdout, "This shell only supports built-ins. Replace this to run programs as commands.\n");
-    }
+			  pid_t cpid = fork(); 
+
+  pid_t mypid;
+  if( cpid > 0 ) { // parent process
+    mypid = getpid();
+    
+    int status;
+    pid_t tcpid = wait(&status);
+   
+  }
+
+  else if( cpid == 0 ){ // child process
+path(t);	  
+  }
+
+  else {
+    perror( "Fork failed" );
+    exit( EXIT_FAILURE );
+  }
+	
+          }
  if(getcwd(cwd,sizeof(cwd))!= NULL)
     fprintf(stdout, "%d ", lineNum++);
 	fprintf(stdout,cwd);
